@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fontFamily="casual"
-    android:paddingBottom="@dimen/activity_padding"
-    android:paddingTop="@dimen/activity_padding"
+    android:padding="@dimen/activity_padding"
     android:textSize="18sp"
     android:textStyle="bold">
 
