@@ -1,13 +1,13 @@
 package com.codeschool.candycoded;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayList<String> candyList = new ArrayList<>();
+        final ArrayList<String> candyList = new ArrayList<>();
 
         candyList.add("Tropical Wave");
         candyList.add("Berry Bouncer");
@@ -57,8 +57,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view,
                                     int i, long l) {
-                Toast toast = Toast.makeText(MainActivity.this, "" + i, Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast = Toast.makeText(MainActivity.this, "" + i, Toast.LENGTH_SHORT);
+//                toast.show();
+                Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
+                detailIntent.putExtra("candy_name", candyList.get(i));
+                startActivity(detailIntent);
             }
         });
     }
