@@ -4,13 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.TextHttpResponseHandler;
+
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,22 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ArrayList<String> candyList = new ArrayList<>();
 
-        candyList.add("Tropical Wave");
-        candyList.add("Berry Bouncer");
-        candyList.add("Grape Gummer");
-        candyList.add("Apple of My Eye");
-        candyList.add("Much Minty");
-        candyList.add("So Fresh");
-        candyList.add("Sassy Sandwich Cookie");
-        candyList.add("Uni-pop");
-        candyList.add("Strawberry Surprise");
-        candyList.add("Wish Upon a Star");
-        candyList.add("Watermelon Like Whoa");
-        candyList.add("Twist 'n' Shout");
-        candyList.add("Beary Squad Goals");
-        candyList.add("ROYGBIV Spinner");
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 R.layout.list_item_candy,
                 R.id.text_view_candy,
@@ -45,6 +38,29 @@ public class MainActivity extends AppCompatActivity {
 
         ListView listView = this.findViewById(R.id.list_view_candy);
         listView.setAdapter(adapter);
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get("https://s3.amazonaws.com/courseware.codeschool.com/super_sweet_android_time/API/CandyCoded.json", new TextHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+                Log.d("AsyncHttpClient", "response = " + response);
+                Gson gson = new GsonBuilder().create();
+                Candy[] candies = gson.fromJson(response, Candy[].class);
+
+                adapter.clear();
+
+                for (Candy candy: candies) {
+                    adapter.add(candy.name);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String response,
+                                  Throwable throwable) {
+                Log.e("AsyncHttpClient", "response = " + response);
+            }
+        });
 
         Context context = this;
         String text = "Hello toast!";
