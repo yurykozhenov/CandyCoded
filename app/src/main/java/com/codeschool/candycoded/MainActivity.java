@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
+    private Candy[] candies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Log.d("AsyncHttpClient", "response = " + response);
                 Gson gson = new GsonBuilder().create();
-                Candy[] candies = gson.fromJson(response, Candy[].class);
+                candies = gson.fromJson(response, Candy[].class);
 
                 adapter.clear();
 
@@ -76,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
 //                Toast toast = Toast.makeText(MainActivity.this, "" + i, Toast.LENGTH_SHORT);
 //                toast.show();
                 Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
-                detailIntent.putExtra("candy_name", candyList.get(i));
+                detailIntent.putExtra("candy_name", candies[i].name);
+                detailIntent.putExtra("candy_image", candies[i].image);
+                detailIntent.putExtra("candy_price", candies[i].price);
+                detailIntent.putExtra("candy_desc", candies[i].description);
                 startActivity(detailIntent);
             }
         });
