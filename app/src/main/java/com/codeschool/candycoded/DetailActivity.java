@@ -18,7 +18,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Intent intent = DetailActivity.this.getIntent();
+        Intent intent = getIntent();
 
         if (intent.hasExtra(MainActivity.EXTRA_POSITION)) {
             int position = intent.getIntExtra(MainActivity.EXTRA_POSITION, 0);
