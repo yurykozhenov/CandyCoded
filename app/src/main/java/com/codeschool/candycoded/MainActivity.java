@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private Candy[] candies;
     private CandyDbHelper candyDbHelper = new CandyDbHelper(this);
     private CandyCursorAdapter adapter;
+    private AsyncHttpClient client = new AsyncHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,34 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = this.findViewById(R.id.list_view_candy);
         listView.setAdapter(adapter);
 
-        AsyncHttpClient client = new AsyncHttpClient();
+        loadCandiesFromServer(null);
 
+        SwipeRefreshLayout swipeRefreshLayout = this.findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.i("SwipeRefreshLayout", "onRefresh called from SwipeRefreshLayout");
+
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
+                        loadCandiesFromServer(() -> swipeRefreshLayout.setRefreshing(false));
+                    }
+                }
+        );
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view,
+                                    int i, long l) {
+                Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
+                detailIntent.putExtra(EXTRA_POSITION, i);
+                startActivity(detailIntent);
+            }
+        });
+    }
+
+    private void loadCandiesFromServer(Runnable callback) {
         client.get("https://s3.amazonaws.com/courseware.codeschool.com/super_sweet_android_time/API/CandyCoded.json", new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String response) {
@@ -54,42 +82,35 @@ public class MainActivity extends AppCompatActivity {
                 SQLiteDatabase db = candyDbHelper.getWritableDatabase();
                 Cursor cursor = db.rawQuery("SELECT * FROM candy", null);
                 adapter.changeCursor(cursor);
+
+                if (callback != null) {
+                    Toast toast = Toast.makeText(MainActivity.this, "Products updated", Toast.LENGTH_SHORT);
+                    toast.show();
+                    callback.run();
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String response,
                                   Throwable throwable) {
                 Log.e("AsyncHttpClient", "response = " + response);
-            }
-        });
 
-        Context context = this;
-        String text = "Hello toast!";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view,
-                                    int i, long l) {
-//                Toast toast = Toast.makeText(MainActivity.this, "" + i, Toast.LENGTH_SHORT);
-//                toast.show();
-                Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
-                detailIntent.putExtra(EXTRA_POSITION, i);
-                startActivity(detailIntent);
+                if (callback != null) {
+                    Toast toast = Toast.makeText(MainActivity.this, "Unable to update products", Toast.LENGTH_SHORT);
+                    toast.show();
+                    callback.run();
+                }
             }
         });
     }
 
-    public void removeOldCandiesFromDatabase() {
+    private void removeOldCandiesFromDatabase() {
         SQLiteDatabase db = candyDbHelper.getWritableDatabase();
 
         db.delete(CandyEntry.TABLE_NAME, "", new String[] {});
     }
 
-    public void addCandiesToDatabase(Candy[] candies) {
+    private void addCandiesToDatabase(Candy[] candies) {
         SQLiteDatabase db = candyDbHelper.getWritableDatabase();
 
         for (Candy candy : candies) {
