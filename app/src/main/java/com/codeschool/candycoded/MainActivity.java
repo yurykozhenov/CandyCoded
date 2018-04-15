@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 Gson gson = new GsonBuilder().create();
                 candies = gson.fromJson(response, Candy[].class);
 
+                removeOldCandiesFromDatabase();
                 addCandiesToDatabase(candies);
 
                 SQLiteDatabase db = candyDbHelper.getWritableDatabase();
@@ -80,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(detailIntent);
             }
         });
+    }
+
+    public void removeOldCandiesFromDatabase() {
+        SQLiteDatabase db = candyDbHelper.getWritableDatabase();
+
+        db.delete(CandyEntry.TABLE_NAME, "", new String[] {});
     }
 
     public void addCandiesToDatabase(Candy[] candies) {
