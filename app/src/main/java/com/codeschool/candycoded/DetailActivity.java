@@ -20,8 +20,8 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intent = DetailActivity.this.getIntent();
 
-        if (intent.hasExtra("position")) {
-            int position = intent.getIntExtra("position", 0);
+        if (intent.hasExtra(MainActivity.EXTRA_POSITION)) {
+            int position = intent.getIntExtra(MainActivity.EXTRA_POSITION, 0);
 
             CandyDbHelper candyDbHelper = new CandyDbHelper(this);
             SQLiteDatabase db = candyDbHelper.getWritableDatabase();

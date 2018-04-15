@@ -22,6 +22,7 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String EXTRA_POSITION = "position";
     private Candy[] candies;
     private CandyDbHelper candyDbHelper = new CandyDbHelper(this);
     private CandyCursorAdapter adapter;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 //                Toast toast = Toast.makeText(MainActivity.this, "" + i, Toast.LENGTH_SHORT);
 //                toast.show();
                 Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
-                detailIntent.putExtra("position", i);
+                detailIntent.putExtra(EXTRA_POSITION, i);
                 startActivity(detailIntent);
             }
         });
