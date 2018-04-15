@@ -1,16 +1,13 @@
 package com.codeschool.candycoded;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -44,27 +41,18 @@ public class MainActivity extends AppCompatActivity {
         loadCandiesFromServer(null);
 
         SwipeRefreshLayout swipeRefreshLayout = this.findViewById(R.id.swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        Log.i("SwipeRefreshLayout", "onRefresh called from SwipeRefreshLayout");
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            Log.i("SwipeRefreshLayout", "onRefresh called from SwipeRefreshLayout");
 
-                        // This method performs the actual data-refresh operation.
-                        // The method calls setRefreshing(false) when it's finished.
-                        loadCandiesFromServer(() -> swipeRefreshLayout.setRefreshing(false));
-                    }
-                }
-        );
+            // This method performs the actual data-refresh operation.
+            // The method calls setRefreshing(false) when it's finished.
+            loadCandiesFromServer(() -> swipeRefreshLayout.setRefreshing(false));
+        });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view,
-                                    int i, long l) {
-                Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
-                detailIntent.putExtra(EXTRA_POSITION, i);
-                startActivity(detailIntent);
-            }
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
+            detailIntent.putExtra(EXTRA_POSITION, i);
+            startActivity(detailIntent);
         });
     }
 
@@ -107,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     private void removeOldCandiesFromDatabase() {
         SQLiteDatabase db = candyDbHelper.getWritableDatabase();
 
-        db.delete(CandyEntry.TABLE_NAME, "", new String[] {});
+        db.delete(CandyEntry.TABLE_NAME, "", new String[]{});
     }
 
     private void addCandiesToDatabase(Candy[] candies) {

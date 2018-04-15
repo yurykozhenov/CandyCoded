@@ -40,7 +40,7 @@ public class DetailActivity extends AppCompatActivity {
             textViewName.setText(candyName);
 
             TextView textViewPrice = this.findViewById(R.id.text_view_price);
-            textViewPrice.setText("$" + candyPrice + "/lb");
+            textViewPrice.setText(String.format("$%s/lb", candyPrice));
 
             TextView textViewDesc = this.findViewById(R.id.text_view_desc);
             textViewDesc.setText(candyDesc);

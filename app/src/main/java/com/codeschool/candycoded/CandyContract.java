@@ -1,19 +1,20 @@
 package com.codeschool.candycoded;
 
-
 import android.provider.BaseColumns;
 
 public class CandyContract {
     public static final String DB_NAME = "candycoded.db";
     public static final int DB_VERSION = 1;
 
-    public static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + CandyEntry.TABLE_NAME + " (" +
-            CandyEntry._ID + " INTEGER PRIMARY KEY," +
-            CandyEntry.COLUMN_NAME_NAME + " TEXT," +
-            CandyEntry.COLUMN_NAME_PRICE + " TEXT," +
-            CandyEntry.COLUMN_NAME_DESC + " TEXT," +
-            CandyEntry.COLUMN_NAME_IMAGE + " TEXT)";
+    public static final String SQL_CREATE_ENTRIES = String.format(
+            "CREATE TABLE %s (%s INTEGER PRIMARY KEY,%s TEXT,%s TEXT,%s TEXT,%s TEXT)",
+            CandyEntry.TABLE_NAME,
+            CandyEntry._ID,
+            CandyEntry.COLUMN_NAME_NAME,
+            CandyEntry.COLUMN_NAME_PRICE,
+            CandyEntry.COLUMN_NAME_DESC,
+            CandyEntry.COLUMN_NAME_IMAGE
+    );
 
     public static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + CandyEntry.TABLE_NAME;
